@@ -498,6 +498,52 @@ function normalizeCompany(raw){
   return c;
 }
 
+function evidenceLayers(c){
+  return [
+    {
+      layer:"事实层",
+      content:`${c.name}被归入${c.chain}方向，当前研究页列出的业务、产业位置和指标只是研究入口，正式事实需要继续用公司年报、半年报、公告和交易所披露核验。`,
+      use:"事实层只回答“公司做什么、收入来自哪里、有哪些公开披露”。"
+    },
+    {
+      layer:"推论层",
+      content:`市场关注它，主要因为${c.whyWatch || c.thesis} 这一推论需要被订单、毛利率、现金流、客户结构等数据继续验证。`,
+      use:"推论层回答“行业变化如何传导到公司利润”。"
+    },
+    {
+      layer:"观点层",
+      content:c.thesis,
+      use:"观点层可以错，必须提前写出反证条件和跟踪指标。"
+    },
+    {
+      layer:"未知层",
+      content:(c.openQuestions || []).slice(0,2).join("；"),
+      use:"未知层决定下一次研究应该查什么，而不是被短线涨跌带着走。"
+    }
+  ];
+}
+
+function redFlagChecklist(c){
+  const base = [
+    {flag:"收入增长但经营现金流没有同步改善",why:"可能存在回款慢、项目确认提前或收入质量不足。"},
+    {flag:"应收账款、合同资产或存货增长远快于收入",why:"可能意味着压货、验收慢、坏账或跌价风险。"},
+    {flag:"毛利率连续下滑但估值仍按高成长定价",why:"说明竞争加剧或产品结构不及预期。"},
+    {flag:"热门业务只在叙事里，收入占比披露不清",why:"容易从基本面研究滑向主题交易。"}
+  ];
+  const categoryFlags = {
+    "ai-optical":[{flag:"海外单一大客户收入占比过高",why:"客户砍单会直接影响订单和估值。"}],
+    "semiconductor":[{flag:"合同负债增长但验收转收入慢",why:"设备订单可能没有顺利兑现为利润。"}],
+    "robotics":[{flag:"只有样机或送样，没有客户定点和量产收入",why:"说明仍处在主题阶段。"}],
+    "ai-software":[{flag:"AI功能无法单独收费，算力成本却增加",why:"容易出现收入不增、成本先升。"}],
+    "battery":[{flag:"价格战中库存和减值压力扩大",why:"低估值可能不是机会，而是盈利下修。"}],
+    "pv":[{flag:"产业链价格继续下行且亏损面扩大",why:"反转尚未成立。"}],
+    "metals":[{flag:"商品价格处在高位但资本开支激进",why:"周期反转时利润和估值可能双杀。"}],
+    "medicine":[{flag:"研发费用高但核心管线进度不清",why:"估值依赖不确定的未来里程碑。"}],
+    "high-dividend":[{flag:"股息率高但自由现金流下降",why:"高股息可能不可持续。"}]
+  };
+  return [...(categoryFlags[c.category] || []), ...base];
+}
+
 function renderHome(data){
   const {sectors, companies, sources, lessons} = data;
   q("#dashboard").innerHTML = `
@@ -573,6 +619,14 @@ function renderSector(data){
   q("#sector-page").innerHTML = `
     <h2 id="industry-common">行业教材：先理解它如何运转</h2>
     <div class="quote"><strong>一句话解释：</strong>${s.explain}</div>
+    <h2>行业研究路线图</h2>
+    <table><thead><tr><th>步骤</th><th>要解决的问题</th><th>对应证据</th></tr></thead><tbody>
+      <tr><td>1. 拆价值链</td><td>钱到底在哪一环赚？谁有议价权？</td><td>收入结构、毛利率、客户认证、行业价格。</td></tr>
+      <tr><td>2. 看景气</td><td>需求是新增的、周期修复的，还是纯主题想象？</td><td>订单、价格、库存、产能利用率、政策和海外需求。</td></tr>
+      <tr><td>3. 找上市公司映射</td><td>A股公司是否真正处在受益环节？</td><td>年报主营、公告、客户结构、产品收入占比。</td></tr>
+      <tr><td>4. 做财报验证</td><td>行业逻辑是否进入收入、利润和现金流？</td><td>营收、毛利率、经营现金流、应收、存货、合同负债。</td></tr>
+      <tr><td>5. 写反证条件</td><td>什么情况说明判断错了？</td><td>业绩低于预期、毛利率下滑、订单推迟、价格反转。</td></tr>
+    </tbody></table>
     <div class="flow">${s.valueChain.map(n => `<div class="node"><strong>${n.name}</strong><span>${n.note}</span></div>`).join("")}</div>
     <div class="grid-2">
       <div class="card"><strong>靠什么赚钱</strong><p>${s.profitModel}</p></div>
@@ -585,6 +639,13 @@ function renderSector(data){
     <tbody><tr><td>${s.whyRise}</td><td>${s.whyFall}</td><td>${tags(s.leadingIndicators)}</td><td>${tags(s.traps,"risk")}</td></tr></tbody></table>
     <h2>行业指标字典</h2>
     <table><thead><tr><th>指标</th><th>为什么重要</th></tr></thead><tbody>${s.indicatorDictionary.map(i=>`<tr><td>${i.name}</td><td>${i.meaning}</td></tr>`).join("")}</tbody></table>
+    <h2>常见误判</h2>
+    <table><thead><tr><th>误判</th><th>为什么会错</th><th>怎么修正</th></tr></thead><tbody>
+      <tr><td>只看板块热度</td><td>热度可能来自资金拥挤，而不是利润改善。</td><td>回到订单、毛利率和现金流验证。</td></tr>
+      <tr><td>把行业空间等同于公司利润</td><td>好行业里也有低议价权公司。</td><td>拆公司在价值链的位置和收入占比。</td></tr>
+      <tr><td>把短期涨幅当长期确定性</td><td>涨幅可能来自估值抬升，而不是盈利上修。</td><td>比较估值分位和盈利预测变化。</td></tr>
+      <tr><td>只找支持材料</td><td>容易忽视反证信号。</td><td>提前写清楚会推翻逻辑的指标。</td></tr>
+    </tbody></table>
     <h2 id="companies">代表公司与观察池</h2>
     <div class="section-actions">${s.companies.map(code => linkCompany(code, data.companies)).join("")}</div>
     <h2 id="scenario">未来情景推演</h2>
@@ -608,6 +669,10 @@ function renderCompany(data){
     </div>
     <h2>一句话研究结论</h2>
     <div class="quote"><strong>研究论点：</strong>${c.thesis}</div>
+    <h2>证据分层：事实、推论、观点、未知</h2>
+    <table><thead><tr><th>层级</th><th>当前内容</th><th>怎么使用</th></tr></thead><tbody>
+      ${evidenceLayers(c).map(x=>`<tr><td>${x.layer}</td><td>${x.content}</td><td>${x.use}</td></tr>`).join("")}
+    </tbody></table>
     <h2 id="business">业务与赚钱方式</h2>
     <p>${c.business}</p><p>${c.profitLogic}</p>
     <h2>产业链位置怎么判断</h2>
@@ -636,8 +701,19 @@ function renderCompany(data){
     </tr></tbody></table>
     <h2>实操核验路径</h2>
     <ol class="steps">${c.playbook.diligence.map(x=>`<li>${x}</li>`).join("")}</ol>
+    <h2>红旗清单：出现这些情况要重新评估</h2>
+    <table><thead><tr><th>红旗信号</th><th>为什么危险</th></tr></thead><tbody>
+      ${redFlagChecklist(c).map(x=>`<tr><td>${x.flag}</td><td>${x.why}</td></tr>`).join("")}
+    </tbody></table>
     <h2>下一步核验问题</h2>
     <div class="grid-2">${c.openQuestions.map(x=>`<div class="card">${x}</div>`).join("")}</div>
+    <h2>更新节奏</h2>
+    <table><thead><tr><th>频率</th><th>更新什么</th><th>目的</th></tr></thead><tbody>
+      <tr><td>每周</td><td>股价强弱、成交额、板块轮动、公司公告。</td><td>判断市场是否仍在给同一逻辑定价。</td></tr>
+      <tr><td>每月</td><td>产业新闻、订单传闻的公告核验、产品发布、价格变化。</td><td>把新闻流转成可验证变量。</td></tr>
+      <tr><td>每季</td><td>收入、毛利率、费用率、经营现金流、应收、存货、合同负债。</td><td>确认故事是否真正进入财报。</td></tr>
+      <tr><td>大涨后</td><td>估值、减持、业绩预告、机构持仓、龙虎榜和风险提示。</td><td>区分基本面上修和情绪拥挤。</td></tr>
+    </tbody></table>
     <h2 id="scenario">未来情景推演</h2>
     <table><thead><tr><th>乐观</th><th>中性</th><th>悲观</th></tr></thead><tbody><tr><td>${c.scenarios.bull}</td><td>${c.scenarios.base}</td><td>${c.scenarios.bear}</td></tr></tbody></table>
     <h2>同业和行业入口</h2>
@@ -651,7 +727,23 @@ function renderLearn(data){
     <h2 id="lessons">研究课程</h2>
     ${data.lessons.map(l => `<section id="${l.id}" class="card"><h3>${l.title}</h3><p>${l.summary}</p><table><thead><tr><th>核心要点</th><th>实战问题</th></tr></thead><tbody><tr><td>${l.points.map(x=>`<p>${x}</p>`).join("")}</td><td>${l.questions.map(x=>`<p>${x}</p>`).join("")}</td></tr></tbody></table></section>`).join("")}
     <h2 id="dictionary">行业指标字典</h2>
-    <p>指标字典放在各行业页内，后续会抽取成可搜索数据库。</p>`;
+    <p>指标字典放在各行业页内，后续会抽取成可搜索数据库。</p>
+    <h2>一份个股研究笔记应该怎么写</h2>
+    <table><thead><tr><th>模块</th><th>写什么</th><th>写到什么程度才算合格</th></tr></thead><tbody>
+      <tr><td>一句话结论</td><td>公司为什么值得研究，不是为什么一定会涨。</td><td>能说清楚行业、公司位置、核心变量和主要风险。</td></tr>
+      <tr><td>商业模式</td><td>收入从哪里来，客户是谁，成本是什么，利润池在哪。</td><td>能画出从客户需求到公司收入的传导链。</td></tr>
+      <tr><td>财务质量</td><td>收入、毛利率、费用率、现金流、应收、存货、负债。</td><td>能解释利润是真改善还是会计/周期/一次性因素。</td></tr>
+      <tr><td>估值框架</td><td>用PE、PB、PS、股息率还是周期中枢。</td><td>估值方法和公司类型匹配，不拿高点利润做永久利润。</td></tr>
+      <tr><td>反证条件</td><td>什么数据出来说明判断错了。</td><td>至少写出三条可观察、可更新的反证指标。</td></tr>
+    </tbody></table>
+    <h2>研究复盘模板</h2>
+    <ol class="steps">
+      <li>先写原始判断：当时为什么关注它。</li>
+      <li>再写新增事实：新财报、新公告、新订单、新价格。</li>
+      <li>比较事实和原判断：是加强、削弱，还是无关。</li>
+      <li>更新结论：继续跟踪、降级观察、移出观察池。</li>
+      <li>记录错误：是行业判断错、公司选择错、估值太贵，还是被情绪带偏。</li>
+    </ol>`;
 }
 
 loadData().then(data => {
