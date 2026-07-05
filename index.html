@@ -218,6 +218,48 @@
       line-height: 1.6;
     }
 
+    .source-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .source-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fbfdff;
+    }
+
+    .source-item a {
+      color: var(--blue);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .visual-flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      margin: 14px 0;
+    }
+
+    .flow-node {
+      border: 1px solid #bfd0e8;
+      border-radius: 8px;
+      padding: 11px 9px;
+      background: #f4f8ff;
+      text-align: center;
+      min-height: 74px;
+    }
+
+    .flow-node strong {
+      display: block;
+      color: #1c3f78;
+      margin-bottom: 4px;
+    }
+
     input[type="search"] {
       width: 100%;
       border: 1px solid var(--line);
@@ -228,7 +270,7 @@
     }
 
     @media (max-width: 900px) {
-      .grid, .two-col, .link-grid { grid-template-columns: 1fr; }
+      .grid, .two-col, .link-grid, .source-grid, .visual-flow { grid-template-columns: 1fr; }
       h1 { font-size: 27px; }
       main { padding: 18px 12px 42px; }
       section { padding: 15px 12px; }
@@ -383,6 +425,13 @@
       <p>
         这一块适合后续继续扩展：主页保留总览，点击卡片进入单独页面看更细的产业逻辑、公司比较、财报验证和风险清单。
       </p>
+      <div class="visual-flow">
+        <div class="flow-node"><strong>产业催化</strong><span>政策、技术、需求</span></div>
+        <div class="flow-node"><strong>订单验证</strong><span>客户、合同、产能</span></div>
+        <div class="flow-node"><strong>财报兑现</strong><span>收入、毛利、现金流</span></div>
+        <div class="flow-node"><strong>估值定价</strong><span>PE/PS/PEG</span></div>
+        <div class="flow-node"><strong>风险复盘</strong><span>应收、存货、减持</span></div>
+      </div>
       <div class="link-grid">
         <a class="deep-card" href="pages/ai-hardware.html">
           <strong>AI算力硬件</strong>
@@ -408,6 +457,39 @@
           <strong>潜在黑马筛选法</strong>
           <span>不是追题材，而是用产业位置、财务改善、客户验证和估值位置做观察池。</span>
         </a>
+      </div>
+    </section>
+
+    <section id="sources">
+      <h2>信息来源与核验路径</h2>
+      <p>
+        报告里的判断尽量拆成“事实、解释、观点”。事实部分后续应优先从交易所公告、公司定期报告和权威数据源核验。
+      </p>
+      <div class="source-grid">
+        <div class="source-item">
+          <a href="https://www.cninfo.com.cn/" target="_blank" rel="noreferrer">巨潮资讯</a>
+          <p class="small">A 股定期报告、临时公告、业绩预告、问询函。公司层面研究的第一核验入口。</p>
+        </div>
+        <div class="source-item">
+          <a href="https://www.sse.com.cn/" target="_blank" rel="noreferrer">上海证券交易所</a>
+          <p class="small">上交所上市公司公告、监管函件、科创板信息披露。</p>
+        </div>
+        <div class="source-item">
+          <a href="https://www.szse.cn/" target="_blank" rel="noreferrer">深圳证券交易所</a>
+          <p class="small">深市主板、创业板公告和监管信息。</p>
+        </div>
+        <div class="source-item">
+          <a href="https://datacenter-web.eastmoney.com/" target="_blank" rel="noreferrer">东方财富数据中心</a>
+          <p class="small">财报聚合、行业财务数据、行情和板块数据。适合做初筛，正式结论仍需回到公告核验。</p>
+        </div>
+        <div class="source-item">
+          <a href="https://www.csindex.com.cn/" target="_blank" rel="noreferrer">中证指数</a>
+          <p class="small">指数估值、行业指数、宽基和主题指数的估值对照。</p>
+        </div>
+        <div class="source-item">
+          <a href="https://www.gov.cn/zhengce/" target="_blank" rel="noreferrer">中国政府网政策库</a>
+          <p class="small">AI、算力、机器人、数据要素、新质生产力等政策背景的核验入口。</p>
+        </div>
       </div>
     </section>
 
