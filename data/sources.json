@@ -1,0 +1,21 @@
+[
+  {"id":"cninfo","name":"巨潮资讯","grade":"A类","type":"公司公告/定期报告","url":"https://www.cninfo.com.cn/","note":"A股公司公告、年报、季报、业绩预告和问询回复的核心入口。"},
+  {"id":"sse","name":"上海证券交易所","grade":"A类","type":"交易所公告","url":"https://www.sse.com.cn/","note":"上交所、科创板公司公告和监管信息。"},
+  {"id":"szse","name":"深圳证券交易所","grade":"A类","type":"交易所公告","url":"https://www.szse.cn/","note":"深市主板、创业板公告和监管信息。"},
+  {"id":"eastmoney","name":"东方财富数据中心","grade":"C类","type":"行情/财报聚合","url":"https://datacenter-web.eastmoney.com/","note":"适合做行情、行业、财务初筛，正式结论需回到公告核验。"},
+  {"id":"csindex","name":"中证指数","grade":"B类","type":"指数估值","url":"https://www.csindex.com.cn/","note":"宽基、行业、主题指数估值和指数资料。"},
+  {"id":"gov","name":"中国政府网政策库","grade":"B类","type":"政策文件","url":"https://www.gov.cn/zhengce/","note":"宏观政策、产业政策和政府工作报告。"},
+  {"id":"miit","name":"工业和信息化部","grade":"B类","type":"产业政策","url":"https://www.miit.gov.cn/","note":"机器人、人工智能、工业软件、半导体等产业政策入口。"},
+  {"id":"ndrc","name":"国家发展改革委","grade":"B类","type":"产业/能源政策","url":"https://www.ndrc.gov.cn/","note":"算力、电力、新能源、基础设施相关政策。"},
+  {"id":"stats","name":"国家统计局","grade":"B类","type":"宏观和工业数据","url":"https://www.stats.gov.cn/","note":"工业增加值、利润、消费、投资等宏观数据。"},
+  {"id":"pbc","name":"中国人民银行","grade":"B类","type":"流动性/金融数据","url":"https://www.pbc.gov.cn/","note":"社融、货币政策、利率和金融统计。"},
+  {"id":"sec","name":"SEC EDGAR","grade":"A类","type":"海外公司公告","url":"https://www.sec.gov/edgar/search/","note":"NVIDIA、AMD、Intel、Broadcom等海外公司年报季报。"},
+  {"id":"tsmc","name":"TSMC Investor Relations","grade":"A类","type":"海外龙头财报","url":"https://investor.tsmc.com/","note":"全球晶圆制造景气和资本开支的重要观察源。"},
+  {"id":"asml","name":"ASML Investor Relations","grade":"A类","type":"海外设备龙头财报","url":"https://www.asml.com/en/investors","note":"全球半导体设备周期和先进制程资本开支参考。"},
+  {"id":"nvidia","name":"NVIDIA Investor Relations","grade":"A类","type":"AI算力龙头财报","url":"https://investor.nvidia.com/","note":"AI服务器、GPU和数据中心资本开支的重要参考。"},
+  {"id":"wsts","name":"WSTS","grade":"B类","type":"全球半导体协会数据","url":"https://www.wsts.org/","note":"全球半导体销售和周期数据。"},
+  {"id":"semi","name":"SEMI","grade":"B类","type":"半导体设备/材料行业协会","url":"https://www.semi.org/","note":"半导体设备、材料、晶圆厂投资趋势。"},
+  {"id":"sia","name":"SIA","grade":"B类","type":"半导体行业协会","url":"https://www.semiconductors.org/","note":"全球半导体政策、销售和产业格局。"},
+  {"id":"iea","name":"IEA","grade":"B类","type":"能源与电力","url":"https://www.iea.org/","note":"光伏、储能、电力需求和能源转型数据。"},
+  {"id":"fred","name":"FRED","grade":"B类","type":"海外宏观/利率","url":"https://fred.stlouisfed.org/","note":"美债利率、美元流动性、宏观周期观察。"}
+]
