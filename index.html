@@ -218,6 +218,18 @@
       line-height: 1.6;
     }
 
+    .company-link {
+      color: var(--blue);
+      font-weight: 700;
+      text-decoration: none;
+      border-bottom: 1px dotted #9fbbe6;
+    }
+
+    .company-link:hover {
+      color: #0f3b83;
+      border-bottom-style: solid;
+    }
+
     .source-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1327,6 +1339,11 @@
     <section id="watchlist">
       <h2>公司观察池</h2>
       <p class="small">可在下方搜索公司名、代码、板块或关键词。观察池按“代表龙头”和“潜在黑马/弹性观察”分开，后者更需要财报复核。</p>
+      <p>
+        这里的用法不是“看到名字就买”，而是把它当成研究入口：先点公司名进入详情页，看它处在产业链哪一环、为什么市场会买它、
+        它靠什么赚钱、哪些财务指标能验证、什么条件会推翻原逻辑。代表公司通常更适合研究行业主逻辑，弹性观察池更适合研究
+        “小市值、低预期、边际改善”的机会，但风险也更高。
+      </p>
       <input type="search" id="companySearch" placeholder="搜索：如 半导体、机器人、PCB、中际旭创、688981">
       <table id="companyTable">
         <thead>
@@ -1341,7 +1358,7 @@
           <tr>
             <td>AI光模块 / 通信设备</td>
             <td>中际旭创、 新易盛、天孚通信、长飞光纤、亨通光电、光迅科技、中兴通讯、中天科技</td>
-            <td>永鼎股份、剑桥科技、太辰光、通鼎互联、长芯博创、光库科技</td>
+            <td>永鼎股份、剑桥科技、太辰光、通鼎互联、博创科技、光库科技</td>
             <td>800G/1.6T 订单、海外客户、毛利率、库存、汇率。</td>
           </tr>
           <tr>
@@ -1407,7 +1424,7 @@
           <tr>
             <td>贵金属 / 有色</td>
             <td>紫金矿业、山东黄金、中金黄金、江西铜业、中国铝业、赣锋锂业、厦门钨业</td>
-            <td>东方锆业、驰宏锌锗、金力永磁、西部矿业、株冶集团、中稀有色</td>
+            <td>东方锆业、驰宏锌锗、金力永磁、西部矿业、株冶集团、中色股份</td>
             <td>金价、铜价、稀土价格、资源储量、成本曲线。</td>
           </tr>
           <tr>
@@ -1672,6 +1689,77 @@
       rows.forEach(row => {
         row.style.display = row.innerText.toLowerCase().includes(q) ? "" : "none";
       });
+    });
+
+    async function loadCompanyLinks(){
+      const [core, universe] = await Promise.all([
+        fetch("data/companies.json").then(r => r.json()),
+        fetch("data/company_universe.json").then(r => r.json())
+      ]);
+      const map = new Map();
+      [...core, ...universe].forEach(c => {
+        if(c.name && !map.has(c.name)) map.set(c.name, c);
+      });
+      const companies = Array.from(map.values()).sort((a,b) => b.name.length - a.name.length);
+      const info = document.createElement("p");
+      info.className = "small";
+      info.innerHTML = `当前已建立 <strong>${companies.length}</strong> 个公司详情页。点击公司名可进入个股研究页；详情页包含业务、赚钱逻辑、上涨原因、财务验证、反证条件和跟踪指标。`;
+      document.getElementById("companyTable").before(info);
+      ["watchlist","company-cases","blackhorse"].forEach(id => {
+        const root = document.getElementById(id);
+        if(root) linkifyCompanyNames(root, companies);
+      });
+    }
+
+    function linkifyCompanyNames(root, companies){
+      const nodes = [];
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+        acceptNode(node){
+          if(!node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+          if(node.parentElement.closest("a,script,style")) return NodeFilter.FILTER_REJECT;
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      });
+      while(walker.nextNode()) nodes.push(walker.currentNode);
+      nodes.forEach(node => {
+        const text = node.nodeValue;
+        let index = 0;
+        const frag = document.createDocumentFragment();
+        while(index < text.length){
+          let best = null;
+          let bestAt = -1;
+          for(const c of companies){
+            const at = text.indexOf(c.name, index);
+            if(at !== -1 && (bestAt === -1 || at < bestAt || (at === bestAt && c.name.length > best.name.length))){
+              best = c;
+              bestAt = at;
+            }
+          }
+          if(!best){
+            frag.appendChild(document.createTextNode(text.slice(index)));
+            break;
+          }
+          if(bestAt > index) frag.appendChild(document.createTextNode(text.slice(index, bestAt)));
+          const a = document.createElement("a");
+          a.className = "company-link";
+          a.href = `company.html?code=${encodeURIComponent(best.code || best.name)}`;
+          a.textContent = best.name;
+          a.title = `查看${best.name}个股研究页`;
+          frag.appendChild(a);
+          index = bestAt + best.name.length;
+        }
+        node.parentNode.replaceChild(frag, node);
+      });
+    }
+
+    loadCompanyLinks().catch(() => {
+      const table = document.getElementById("companyTable");
+      if(table){
+        const info = document.createElement("p");
+        info.className = "small";
+        info.textContent = "公司详情链接需要通过网站环境加载数据；如果本地双击打开失败，请以 Netlify 域名访问。";
+        table.before(info);
+      }
     });
   </script>
 </body>
