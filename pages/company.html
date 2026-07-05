@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>公司研究卡片</title>
+  <style>
+    body{margin:0;background:#f5f7fa;color:#172033;font-family:"Microsoft YaHei","PingFang SC","Segoe UI",Arial,sans-serif;line-height:1.75}
+    header{background:#0f1f38;color:#fff;padding:34px 24px}
+    main{max-width:1080px;margin:0 auto;padding:24px 18px 52px}
+    a{color:#2457a6;text-decoration:none}
+    section{background:#fff;border:1px solid #d9e0ea;border-radius:8px;padding:18px 20px;margin:16px 0}
+    h1{margin:0 0 8px;font-size:30px}h2{font-size:22px;margin:26px 0 12px;border-left:5px solid #2457a6;padding-left:12px}
+    table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}th,td{border-bottom:1px solid #d9e0ea;padding:9px 8px;text-align:left;vertical-align:top}th{background:#f0f4f9}
+    .back{display:inline-block;margin-bottom:14px}.tag{display:inline-block;border-radius:999px;padding:2px 8px;font-size:12px;background:#e9f1ff;color:#2457a6;margin:2px 4px 2px 0}.risk{background:#fff4d8;color:#9a6500}.good{background:#e8f6ee;color:#247a4b}
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0}.card{border:1px solid #d9e0ea;border-radius:8px;padding:12px;background:#fbfdff}.card strong{display:block;color:#1c3f78;margin-bottom:4px}
+    .muted{color:#667085;font-size:13px}
+    @media(max-width:850px){.grid{grid-template-columns:1fr}table{font-size:13px}}
+  </style>
+</head>
+<body>
+  <header>
+    <h1 id="title">公司研究卡片</h1>
+    <p id="subtitle">用于快速理解公司主营、产业位置、看点、风险和后续核验路径。</p>
+  </header>
+  <main>
+    <a class="back" href="semiconductor.html">← 返回国产半导体页</a>
+    <section id="content"></section>
+  </main>
+
+  <script>
+    const companies = {
+      "688981": {
+        name:"中芯国际", code:"688981", board:"科创板", chain:"晶圆制造", role:"大陆晶圆代工龙头，处在半导体产业链制造环节。",
+        business:"主要提供集成电路晶圆代工服务，覆盖不同制程平台。公司价值取决于产能利用率、产品结构、客户需求和资本开支效率。",
+        why:"国产晶圆制造核心资产，受益于国产替代和下游设计公司需求；但制造环节资本开支重、折旧高，利润波动与周期、利用率高度相关。",
+        good:["制造环节稀缺性强","国产替代战略地位高","客户和平台覆盖广"],
+        risks:["资本开支和折旧压力大","先进制程受外部限制影响","周期下行时产能利用率压力大"],
+        track:["产能利用率","毛利率","资本开支","折旧压力","不同制程收入结构"],
+        view:"偏核心资产，适合看作国产半导体制造基础设施。研究时不能只看收入规模，要重点看毛利率、产能利用率和资本开支回报。"
+      },
+      "002371": {
+        name:"北方华创", code:"002371", board:"深交所", chain:"半导体设备", role:"国产半导体设备龙头之一，覆盖刻蚀、薄膜沉积、清洗等设备方向。",
+        business:"主要面向集成电路、泛半导体等领域提供设备和工艺解决方案。",
+        why:"设备公司直接受益于晶圆厂资本开支和国产替代。设备一旦通过客户验证，后续订单粘性较强。",
+        good:["国产替代主线清晰","设备平台化能力强","客户验证壁垒较高"],
+        risks:["估值通常不低","下游资本开支放缓会影响订单","验收和收入确认节奏可能波动"],
+        track:["新增订单","合同负债","存货","毛利率","研发费用率"],
+        view:"属于半导体设备核心标的，关键不是有没有订单，而是订单质量、验收节奏和毛利率能否持续。"
+      },
+      "688012": {
+        name:"中微公司", code:"688012", board:"科创板", chain:"半导体设备", role:"刻蚀设备和MOCVD设备代表公司。",
+        business:"主要产品用于集成电路和LED等制造工艺，核心看客户验证、工艺覆盖和设备放量。",
+        why:"刻蚀等关键设备国产化空间大，技术壁垒高，进入客户产线后具备较强粘性。",
+        good:["关键设备壁垒较高","客户验证价值高","国产替代空间明确"],
+        risks:["研发投入大","客户验证周期长","订单和验收节奏影响季度利润"],
+        track:["刻蚀设备收入","客户数量","新产品验证进度","毛利率","经营现金流"],
+        view:"更适合用长期产业地位评估，不适合只用单季度利润判断。"
+      },
+      "688072": {
+        name:"拓荆科技", code:"688072", board:"科创板", chain:"薄膜沉积设备", role:"国产薄膜沉积设备代表公司。",
+        business:"聚焦半导体薄膜沉积设备，受益于晶圆厂扩产和国产设备导入。",
+        why:"薄膜沉积是晶圆制造关键工艺，国产替代空间较大，客户验证进展对估值影响明显。",
+        good:["细分环节明确","国产替代逻辑强","客户导入后弹性较大"],
+        risks:["产品线集中","估值对预期敏感","扩产和验收节奏影响利润"],
+        track:["订单和验收","客户集中度","毛利率","研发投入","在手订单"],
+        view:"弹性较强的设备公司，研究重点是从验证到批量采购的持续性。"
+      },
+      "688008": {
+        name:"澜起科技", code:"688008", board:"科创板", chain:"芯片设计/服务器内存接口", role:"服务器内存接口芯片和相关芯片设计公司。",
+        business:"产品与服务器、内存、数据中心相关，受服务器升级和AI算力基础设施影响。",
+        why:"AI服务器和数据中心升级提升高性能内存与接口需求，产品结构升级可能带来利润弹性。",
+        good:["数据中心相关度高","芯片设计毛利率属性较好","产品升级带来估值想象"],
+        risks:["下游服务器周期波动","客户集中和产品迭代风险","高估值下业绩需兑现"],
+        track:["服务器相关收入","新品放量","毛利率","库存","研发进度"],
+        view:"更偏AI服务器链条的芯片设计资产，关键看新品放量和周期修复是否同步。"
+      },
+      "603986": {
+        name:"兆易创新", code:"603986", board:"上交所", chain:"存储/MCU/芯片设计", role:"存储芯片和MCU代表公司。",
+        business:"主要涉及NOR Flash、MCU等产品，受消费电子、工业、汽车和存储周期影响。",
+        why:"存储价格周期、产品结构升级和国产替代共同影响利润。周期向上时利润弹性大。",
+        good:["产品认知度高","存储周期修复弹性","国产MCU和存储替代空间"],
+        risks:["存储周期波动大","库存和价格风险","消费电子需求不稳定"],
+        track:["存储价格","库存水平","毛利率","MCU收入","下游需求"],
+        view:"周期属性较强，不能把价格反弹简单外推为永久高增长。"
+      },
+      "002156": {
+        name:"通富微电", code:"002156", board:"深交所", chain:"封测/先进封装", role:"国内封测重要公司之一。",
+        business:"提供集成电路封装测试服务，先进封装和高性能计算需求是重要看点。",
+        why:"AI芯片和Chiplet趋势提升先进封装价值量，封测厂产能利用率改善时利润弹性明显。",
+        good:["先进封装方向受关注","客户资源重要","行业景气修复弹性较大"],
+        risks:["资本开支和折旧压力","封测毛利率受利用率影响大","客户集中风险"],
+        track:["产能利用率","先进封装收入","资本开支","毛利率","经营现金流"],
+        view:"更适合看先进封装景气和产能利用率，不宜只看营收增长。"
+      },
+      "002185": {
+        name:"华天科技", code:"002185", board:"深交所", chain:"封测", role:"国内封测代表公司。",
+        business:"提供多类型集成电路封装测试服务，受消费电子、通信、汽车电子等需求影响。",
+        why:"封测环节在国产替代和先进封装趋势下有修复机会，但行业竞争和利润率约束明显。",
+        good:["封测规模基础较好","国产供应链受益","景气恢复时弹性较强"],
+        risks:["传统封测竞争激烈","毛利率受利用率影响","资本开支回报需要验证"],
+        track:["毛利率","产能利用率","先进封装占比","现金流","客户结构"],
+        view:"偏周期修复与先进封装转型标的，关键看盈利质量是否改善。"
+      },
+      "600584": {
+        name:"长电科技", code:"600584", board:"上交所", chain:"封测/先进封装", role:"全球封测龙头梯队公司之一。",
+        business:"提供芯片封装测试服务，覆盖通信、消费、计算、汽车等领域。",
+        why:"先进封装和全球客户资源是核心看点，利润受行业周期和产能利用率影响。",
+        good:["规模和客户基础强","先进封装布局","全球化能力"],
+        risks:["周期波动","低毛利业务拖累","资本开支压力"],
+        track:["先进封装进展","毛利率","资本开支","海外客户需求","现金流"],
+        view:"封测环节核心公司，适合跟踪行业景气和先进封装结构升级。"
+      },
+      "688110": {
+        name:"东芯股份", code:"688110", board:"科创板", chain:"存储芯片设计", role:"存储芯片设计公司。",
+        business:"产品涉及NAND、NOR、DRAM等存储芯片方向，受价格周期和下游需求影响较大。",
+        why:"存储周期修复时弹性较大，但库存、价格和产品竞争决定利润质量。",
+        good:["存储周期弹性","国产替代概念清晰","小市值弹性相对更大"],
+        risks:["价格周期波动","库存跌价风险","产品竞争激烈"],
+        track:["存储价格","库存","毛利率","产品结构","现金流"],
+        view:"弹性高但周期风险也高，适合放在观察池中用财报持续验证。"
+      },
+      "603005": {
+        name:"晶方科技", code:"603005", board:"上交所", chain:"封装/传感器封装", role:"图像传感器等封装服务公司。",
+        business:"与影像传感器、消费电子、汽车电子等需求相关。",
+        why:"受益于传感器、汽车电子和先进封装需求，但也受消费电子周期影响。",
+        good:["传感器封装特色明显","汽车电子和端侧设备有想象","周期修复弹性"],
+        risks:["消费电子波动","客户集中","毛利率稳定性需要验证"],
+        track:["传感器封装收入","汽车电子客户","毛利率","存货","现金流"],
+        view:"属于特色封装方向，核心看下游需求修复和产品结构升级。"
+      }
+    };
+
+    const params = new URLSearchParams(location.search);
+    const code = params.get("code") || "688981";
+    const c = companies[code];
+    const box = document.getElementById("content");
+    if (!c) {
+      document.getElementById("title").textContent = "未收录公司";
+      box.innerHTML = "<p>这个代码暂未收录。后续可以继续扩展公司库。</p>";
+    } else {
+      document.title = c.name + " 公司研究卡片";
+      document.getElementById("title").textContent = `${c.name}（${c.code}）`;
+      document.getElementById("subtitle").textContent = `${c.chain}｜${c.board}｜研究口径：静态初筛，正式结论需回到公告和财报核验。`;
+      box.innerHTML = `
+        <h2>一、公司主要信息</h2>
+        <div class="grid">
+          <div class="card"><strong>股票代码</strong><span>${c.code}</span></div>
+          <div class="card"><strong>上市板块</strong><span>${c.board}</span></div>
+          <div class="card"><strong>产业链位置</strong><span>${c.chain}</span></div>
+          <div class="card"><strong>研究属性</strong><span>半导体观察池</span></div>
+        </div>
+        <p>${c.role}</p>
+        <h2>二、主营业务与赚钱方式</h2>
+        <p>${c.business}</p>
+        <p>${c.why}</p>
+        <h2>三、优势与风险</h2>
+        <table>
+          <thead><tr><th>优势/看点</th><th>风险/反证点</th></tr></thead>
+          <tbody><tr><td>${c.good.map(x=>`<span class="tag good">${x}</span>`).join("")}</td><td>${c.risks.map(x=>`<span class="tag risk">${x}</span>`).join("")}</td></tr></tbody>
+        </table>
+        <h2>四、后续跟踪指标</h2>
+        <p>${c.track.map(x=>`<span class="tag">${x}</span>`).join("")}</p>
+        <h2>五、初步判断</h2>
+        <p>${c.view}</p>
+        <h2>六、信息来源与核验路径</h2>
+        <p class="muted">建议核验：巨潮资讯、上交所/深交所公告、公司年度报告和一季报、投资者关系活动记录、东方财富财报数据中心。页面内容是研究辅助，不构成投资建议。</p>
+        <p><a href="https://www.cninfo.com.cn/" target="_blank" rel="noreferrer">巨潮资讯</a>　
+        <a href="https://www.sse.com.cn/" target="_blank" rel="noreferrer">上交所</a>　
+        <a href="https://www.szse.cn/" target="_blank" rel="noreferrer">深交所</a>　
+        <a href="https://datacenter-web.eastmoney.com/" target="_blank" rel="noreferrer">东方财富数据中心</a></p>
+      `;
+    }
+  </script>
+</body>
+</html>
